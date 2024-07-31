@@ -5,12 +5,12 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=kohan
-      - POSTGRES_USER=kohan
-      - POSTGRES_PASSWORD=irkohan123
+      - POSTGRES_DB={{cookiecutter.project_slug}}
+      - POSTGRES_USER={{cookiecutter.postgres_user}}
+      - POSTGRES_PASSWORD={{cookiecutter.postgres_password}}
 
   rabbitmq:
-    image: "rabbitmq:alpine"
+    image: rabbitmq:alpine
     container_name: rabbitmq
     healthcheck:
       test: rabbitmq-diagnostics -q ping
@@ -25,12 +25,12 @@ services:
     container_name: backend
     command: ./docker/web_entrypoint.sh
     environment:
-      - DATABASE_URL=psql://kohan:irkohan123@db:5432/kohan
+      - DATABASE_URL=psql://{{cookiecutter.postgres_user}}:{{cookiecutter.postgres_password}}@db:5432/{{cookiecutter.project_slug}}
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
     volumes:
       - .:/app
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - db
       - rabbitmq
@@ -40,11 +40,11 @@ services:
     build:
       context: .
       dockerfile: docker/production.Dockerfile
-    # command: celery -A kohan.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
+    # command: celery -A {{cookiecutter.project_slug}}.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
     container_name: worker
     command: ./docker/celery_entrypoint.sh
     environment:
-      - DATABASE_URL=psql://kohan:irkohan123@db:5432/kohan
+      - DATABASE_URL=psql://{{cookiecutter.postgres_user}}:{{cookiecutter.postgres_password}}@db:5432/{{cookiecutter.project_slug}}
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
     volumes:
       - .:/app
@@ -57,11 +57,11 @@ services:
     build:
       context: .
       dockerfile: docker/production.Dockerfile
-    # command: celery -A kohan.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    # command: celery -A {{cookiecutter.project_slug}}.tasks beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     container_name: beats
     command: ./docker/beats_entrypoint.sh
     environment:
-      - DATABASE_URL=psql://kohan:irkohan123@db:5432/kohan
+      - DATABASE_URL=psql://{{cookiecutter.postgres_user}}:{{cookiecutter.postgres_password}}@db:5432/{{cookiecutter.project_slug}}
       - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
     volumes:
       - .:/app
