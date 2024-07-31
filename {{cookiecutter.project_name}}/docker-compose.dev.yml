@@ -1,14 +1,13 @@
 services:
-
   db:
-    image: postgres:14.1
-    container_name: postgres
+    image: postgres:16.3-alpine
+    container_name: database
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB={{cookiecutter.project_slug}}
-      - POSTGRES_USER={{cookiecutter.postgres_user}}
-      - POSTGRES_PASSWORD={{cookiecutter.postgres_password}}
+      - POSTGRES_DB=kohan
+      - POSTGRES_USER=kohan
+      - POSTGRES_PASSWORD=irkohan123
     volumes:
       - postgres-data:/var/lib/postgresql/data/
 
@@ -18,7 +17,7 @@ services:
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: 'pg_pass'
+      PGADMIN_DEFAULT_PASSWORD: "pg_pass"
     ports:
       - "5050:80"
 
@@ -32,14 +31,13 @@ services:
       retries: 3
 
   redis:
-    image: redis:7
+    image: redis:7.4.0-alpine
     container_name: redis
     ports:
       - 6379:6379
     volumes:
       - redis-data:/data
 
-
 volumes:
-    postgres-data:
-    redis-data:
+  postgres-data:
+  redis-data:
