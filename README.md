@@ -11,5 +11,5 @@ pip install cookiecutter
 
 setup the project
 ```
-cookiecutter https://github.com/amirbahador-hub/django_style_guide.git
+cookiecutter https://github.com/mhdirajabi/django-cookiecutter-template
 ```
